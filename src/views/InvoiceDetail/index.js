@@ -20,22 +20,25 @@ import Analysis from "./components/analysis";
 import Stepper from "./components/Stepper";
 import { InvoiceStore } from "../../context/invoices";
 import { analyzeInvoice, fetchInvoiceResults } from "../../utilities";
+import { InvoiceIndexStoreProvider } from "./context/invoiceIndex";
 
 const InvoiceDetail = () => {
   let { name } = useParams(); // Fetching receipt name from URL
   const { state, dispatch } = useContext(InvoiceStore);
   const [invoice, setInvoice] = useState({});
+  const [invoiceIndex, setInvoiceIndex] = useState(false);
   const [modal, setModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchInvoiceByName = (invoiceName) => {
+  const fetchInvoiceIndexByName = (invoiceName) => {
     if (!state.invoices || !state.invoices.length) {
       return {};
     }
-    const foundInvoice = state.invoices.find(
+    const foundIndex = state.invoices.findIndex(
       (invoice) => invoice.name === invoiceName
     );
-    return foundInvoice;
+    const foundInvoice = state.invoices[foundIndex];
+    return { foundInvoice, foundIndex };
   };
 
   const submitInvoice = () => {
@@ -99,8 +102,16 @@ const InvoiceDetail = () => {
   };
 
   useEffect(() => {
-    const invoice = fetchInvoiceByName(name);
-    setInvoice(invoice);
+    const invoiceData = fetchInvoiceIndexByName(name);
+    const { foundInvoice, foundIndex } = invoiceData;
+
+    if (foundInvoice) {
+      setInvoice(foundInvoice);
+    }
+
+    if (typeof foundIndex === "number") {
+      setInvoiceIndex(foundIndex);
+    }
 
     if (invoice.status === 1) {
       checkResults(isLoading, invoice);
@@ -145,7 +156,9 @@ const InvoiceDetail = () => {
             <Stepper invoice={invoice} submitInvoice={submitInvoice}></Stepper>
           </Col>
         </Row>
-        <Analysis invoice={invoice} />
+        <InvoiceIndexStoreProvider index={invoiceIndex}>
+          <Analysis invoice={invoice} />
+        </InvoiceIndexStoreProvider>
       </div>
       <Modal isOpen={modal} toggle={toggle}>
         <ModalBody>

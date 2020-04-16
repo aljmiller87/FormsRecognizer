@@ -9,6 +9,12 @@ const reducer = (state, action) => {
   let invoicesClone;
   let index;
   switch (action.type) {
+    case "ADD_CONFIDENCE":
+      invoicesClone = [...state.invoices];
+      const invoice = invoicesClone[action.payload.index];
+      invoice.analysis.confidence.push(action.payload.field);
+      return { ...state, invoices: invoicesClone };
+    // return state;
     case "UPDATE_INVOICE":
       invoicesClone = [...state.invoices];
       index = invoicesClone.findIndex(

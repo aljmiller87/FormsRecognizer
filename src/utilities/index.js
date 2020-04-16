@@ -6,10 +6,6 @@ const getKey = (str) => {
 };
 
 export const analyzeInvoice = (invoice) => {
-  console.log(
-    "process.env.REACT_APP_AZURE_SAS",
-    process.env.REACT_APP_AZURE_SAS
-  );
   return axios({
     method: "post",
     url:
@@ -40,7 +36,6 @@ export const analyzeInvoice = (invoice) => {
 };
 
 export const fetchInvoiceResults = (invoice) => {
-  console.log("getting here", invoice.analysis.apiKey);
   const key = invoice.analysis.apiKey;
   return axios({
     method: "get",

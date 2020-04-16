@@ -10,7 +10,6 @@ const DocType = ({ data }) => {
   const [docType, setDocType] = useState("");
   useEffect(() => {
     let type = get(data, "analyzeResult.documentResults[0].docType", {});
-    console.log("TYPE TYPE TYPE", type);
     setDocType(type);
   }, [data]);
 

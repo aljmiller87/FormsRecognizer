@@ -25,9 +25,7 @@ import PhysicalDetails from "./Cards/PhysicalDetails";
 import TotalConfidence from "./Cards/TotalConfidence";
 import DocType from "./Cards/DocType";
 
-window._get = get;
-
-const analysisComponent = ({ invoice }) => {
+const analysisComponent = ({ invoice, invoiceIndex }) => {
   const { analysis } = invoice;
   const [activeTab, setActiveTab] = useState("1");
   const [isDataLoaded, setDataLoaded] = useState(false);
@@ -36,7 +34,6 @@ const analysisComponent = ({ invoice }) => {
   if (data !== analysisData) {
     setAnalysisData(data);
   }
-  console.log("analysisData", analysisData);
 
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
@@ -125,12 +122,15 @@ const analysisComponent = ({ invoice }) => {
           <TabContent activeTab={activeTab}>
             <TabPane tabId="1">
               <Row>
-                <TotalConfidence data={analysisData} />
+                <TotalConfidence
+                  data={analysisData}
+                  invoiceIndex={invoiceIndex}
+                />
                 <PhysicalDetails data={analysisData} />
                 <DocType data={analysisData} />
               </Row>
               <Row>
-                <Fields data={analysisData} />
+                <Fields data={analysisData} invoiceIndex={invoiceIndex} />
               </Row>
             </TabPane>
             <TabPane tabId="2">

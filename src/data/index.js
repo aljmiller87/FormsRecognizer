@@ -26,6 +26,7 @@ export const invoices = [
     analysis: {
       apiKey: "",
       data: {},
+      confidence: [],
     },
   },
   {
@@ -36,6 +37,7 @@ export const invoices = [
     analysis: {
       apiKey: "",
       data: {},
+      confidence: [],
     },
   },
   {
@@ -46,6 +48,7 @@ export const invoices = [
     analysis: {
       apiKey: "",
       data: {},
+      confidence: [],
     },
   },
   {
@@ -56,6 +59,7 @@ export const invoices = [
     analysis: {
       apiKey: "",
       data: {},
+      confidence: [],
     },
   },
   {
@@ -66,6 +70,7 @@ export const invoices = [
     analysis: {
       apiKey: "",
       data: {},
+      confidence: [],
     },
   },
 ];
