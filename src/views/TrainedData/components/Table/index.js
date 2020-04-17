@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { Wrapper, Row, TableHeader, Highlight } from "./styles";
+import Confidence from "../../../InvoiceDetail/components/Confidence";
 
 import { InvoiceStore } from "../../../../context/invoices";
 const index = () => {
@@ -14,6 +15,7 @@ const index = () => {
         <ul>
           <li>Name</li>
           <li>Status</li>
+          <li>Confidence</li>
         </ul>
       </TableHeader>
 
@@ -30,6 +32,13 @@ const index = () => {
                   <Highlight>{name}</Highlight>
                 </li>
                 <li>{state.invoiceStatus[invoice.status].name}</li>
+                <li>
+                  {invoice.status === 2 ? (
+                    <Confidence invoiceIndex={index} />
+                  ) : (
+                    "No data"
+                  )}
+                </li>
                 <li>Click to view</li>
               </ul>
             </Link>

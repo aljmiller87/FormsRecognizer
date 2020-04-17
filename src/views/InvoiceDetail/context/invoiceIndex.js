@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useContext } from "react";
 export const InvoiceIndexStore = React.createContext();
 
 const reducer = (state, action) => {
@@ -25,4 +25,15 @@ export const InvoiceIndexStoreProvider = ({ children, index }) => {
       {children}
     </InvoiceIndexStore.Provider>
   );
+};
+
+export const useInvoiceIndex = () => {
+  const context = useContext(InvoiceIndexStore);
+
+  if (!context) {
+    console.log("Could not fetch context");
+    return false;
+  }
+
+  return context;
 };

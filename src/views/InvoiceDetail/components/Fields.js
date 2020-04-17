@@ -30,7 +30,7 @@ const Fields = ({ data }) => {
   };
 
   return (
-    <Col>
+    <Col style={{ color: "#ddd" }}>
       <h3 className="nav-tabs">All Fields</h3>
       {renderFields()}
     </Col>
