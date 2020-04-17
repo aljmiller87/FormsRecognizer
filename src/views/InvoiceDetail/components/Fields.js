@@ -1,25 +1,28 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Col } from "reactstrap";
 import { get } from "lodash";
 import FieldComponent from "./Fields/index";
+import { InvoiceDetailStore } from "../context/InvoiceDetail";
 
-const Fields = ({ data }) => {
-  if (!data) {
-    return null;
-  }
-
+const Fields = () => {
+  const { invoiceState } = useContext(InvoiceDetailStore);
+  const { invoice } = invoiceState;
   const [allFieldsArray, setAllFieldsArray] = useState([]);
   const [allFieldsObj, setAllFieldsObj] = useState({});
 
   useEffect(() => {
-    let fields = get(data, "analyzeResult.documentResults[0].fields", false);
+    let fields = get(
+      invoice,
+      "analysis.data.analyzeResult.documentResults[0].fields",
+      false
+    );
     if (fields) {
       let fieldsArray = Object.keys(fields);
       setAllFieldsArray(fieldsArray);
       setAllFieldsObj(fields);
     }
-  }, [data]);
+  }, [invoice]);
 
   const renderFields = () => {
     return allFieldsArray.map((item, index) => {

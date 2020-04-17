@@ -1,13 +1,12 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Col, Card, CardTitle, CardText } from "reactstrap";
 import { get } from "lodash";
+import { InvoiceDetailStore } from "../../context/InvoiceDetail";
 
-const PhysicalDetails = ({ data }) => {
-  if (!data) {
-    return null;
-  }
-
+const PhysicalDetails = () => {
+  const { invoiceState } = useContext(InvoiceDetailStore);
+  const { invoice } = invoiceState;
   const [pages, setPages] = useState([]);
 
   const renderPhysicalDetails = () => {
@@ -28,9 +27,9 @@ const PhysicalDetails = ({ data }) => {
   };
 
   useEffect(() => {
-    let allPages = get(data, "analyzeResult.readResults", []);
+    let allPages = get(invoice, "analysis.data.analyzeResult.readResults", []);
     setPages(allPages);
-  }, [data]);
+  }, [invoice]);
 
   return (
     <Col sm="6" md="4">

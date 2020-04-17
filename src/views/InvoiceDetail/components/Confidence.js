@@ -25,6 +25,10 @@ const Confidence = ({ invoiceIndex }) => {
     }
   }, [state.invoices[invoiceIndex]]);
 
+  if (!state || !(invoiceIndex >= 0)) {
+    return null;
+  }
+
   return <b>{confidence}</b>;
 };
 

@@ -1,9 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import styled from "styled-components";
 import classnames from "classnames";
 import { get } from "lodash";
+import { InvoiceDetailStore } from "../context/InvoiceDetail";
 
 import {
   Row,
@@ -25,7 +25,14 @@ import PhysicalDetails from "./Cards/PhysicalDetails";
 import TotalConfidence from "./Cards/TotalConfidence";
 import DocType from "./Cards/DocType";
 
-const analysisComponent = ({ invoice, invoiceIndex }) => {
+const analysisComponent = () => {
+  const { invoiceState, invoiceDispatch } = useContext(InvoiceDetailStore);
+  const { invoice } = invoiceState;
+
+  // Sanity Check
+  if (!invoice) {
+    return null;
+  }
   const { analysis } = invoice;
   const [activeTab, setActiveTab] = useState("1");
   const [isDataLoaded, setDataLoaded] = useState(false);
@@ -70,7 +77,9 @@ const analysisComponent = ({ invoice, invoiceIndex }) => {
       <Nav tabs>
         <NavItem>
           <NavLink
-            className={classnames({ active: activeTab === "1" })}
+            className={classnames({
+              active: activeTab === "1",
+            })}
             onClick={() => {
               toggle("1");
             }}
@@ -80,7 +89,9 @@ const analysisComponent = ({ invoice, invoiceIndex }) => {
         </NavItem>
         <NavItem>
           <NavLink
-            className={classnames({ active: activeTab === "2" })}
+            className={classnames({
+              active: activeTab === "2",
+            })}
             onClick={() => {
               toggle("2");
             }}
@@ -122,15 +133,12 @@ const analysisComponent = ({ invoice, invoiceIndex }) => {
           <TabContent activeTab={activeTab}>
             <TabPane tabId="1">
               <Row>
-                <TotalConfidence
-                  data={analysisData}
-                  invoiceIndex={invoiceIndex}
-                />
-                <PhysicalDetails data={analysisData} />
-                <DocType data={analysisData} />
+                <TotalConfidence />
+                <PhysicalDetails />
+                <DocType />
               </Row>
               <Row>
-                <Fields data={analysisData} invoiceIndex={invoiceIndex} />
+                <Fields />
               </Row>
             </TabPane>
             <TabPane tabId="2">
@@ -138,13 +146,11 @@ const analysisComponent = ({ invoice, invoiceIndex }) => {
                 <Col sm="12">
                   <Card>
                     <CardTitle>Card Data</CardTitle>
-                    {invoice && invoice.analysis && invoice.analysis.data && (
-                      <CardBody>
-                        <CardText>
-                          {JSON.stringify(invoice.analysis.data, undefined, 4)}
-                        </CardText>
-                      </CardBody>
-                    )}
+                    <CardBody>
+                      <CardText>
+                        {JSON.stringify(invoice.analysis.data, undefined, 4)}
+                      </CardText>
+                    </CardBody>
                   </Card>
                 </Col>
               </Row>

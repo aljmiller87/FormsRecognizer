@@ -6,6 +6,7 @@ const getKey = (str) => {
 };
 
 export const analyzeInvoice = (invoice) => {
+  console.log("invoice passed to", invoice);
   return axios({
     method: "post",
     url:

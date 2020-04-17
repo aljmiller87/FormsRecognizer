@@ -30,6 +30,7 @@ import routes from "routes.js";
 
 import logo from "assets/img/react-logo.png";
 import InvoiceDetail from "views/InvoiceDetail";
+import { InvoiceDetailStoreProvider } from "views/InvoiceDetail/context/InvoiceDetail";
 
 var ps;
 
@@ -141,7 +142,9 @@ class Admin extends React.Component {
             <Switch>
               {this.getRoutes(routes)}
               <Route path="/admin/invoices/:name">
-                <InvoiceDetail />
+                <InvoiceDetailStoreProvider>
+                  <InvoiceDetail />
+                </InvoiceDetailStoreProvider>
               </Route>
               <Redirect from="*" to="/admin/dashboard" />
             </Switch>

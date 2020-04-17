@@ -3,10 +3,10 @@ import React, { useContext } from "react";
 import { Col, Card, CardTitle, CardText } from "reactstrap";
 import Confidence from "../Confidence";
 
-import { InvoiceIndexStore } from "../../context/invoiceIndex";
+import { InvoiceDetailStore } from "../../context/InvoiceDetail";
 
 const TotalConfidence = () => {
-  const { indexState } = useContext(InvoiceIndexStore);
+  const { invoiceState } = useContext(InvoiceDetailStore);
 
   return (
     <Col sm="6" md="4">
@@ -14,7 +14,7 @@ const TotalConfidence = () => {
         <CardTitle tag="h3">Total Confidence</CardTitle>
         <CardText>
           Total confidence:&nbsp;
-          <Confidence invoiceIndex={indexState} />%
+          <Confidence invoiceIndex={invoiceState.invoice.index} />%
         </CardText>
       </Card>
     </Col>

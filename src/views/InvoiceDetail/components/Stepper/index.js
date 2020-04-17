@@ -132,7 +132,6 @@ const CustomizedSteppers = ({ invoice, submitInvoice }) => {
 
   return (
     <Card className={classes.root}>
-      hello
       <Stepper
         alternativeLabel
         activeStep={activeStep}

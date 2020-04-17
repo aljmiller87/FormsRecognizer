@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import React, { useContext } from "react";
 import {
   Row,
   Col,
@@ -11,38 +10,27 @@ import {
   CardSubtitle,
   CardText,
   Button,
-  Modal,
-  ModalBody,
-  ModalFooter,
 } from "reactstrap";
 import styled from "styled-components";
-import Analysis from "./components/analysis";
+import Analysis from "./components/Analysis";
 import Stepper from "./components/Stepper";
+import ModalComponent from "./components/ModalComponent";
+import { analyzeInvoice } from "../../utilities";
 import { InvoiceStore } from "../../context/invoices";
-import { analyzeInvoice, fetchInvoiceResults } from "../../utilities";
-import { InvoiceIndexStoreProvider } from "./context/invoiceIndex";
+import { InvoiceDetailStore } from "./context/InvoiceDetail";
 
 const InvoiceDetail = () => {
-  let { name } = useParams(); // Fetching receipt name from URL
-  const { state, dispatch } = useContext(InvoiceStore);
-  const [invoice, setInvoice] = useState({});
-  const [invoiceIndex, setInvoiceIndex] = useState(false);
-  const [modal, setModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { dispatch } = useContext(InvoiceStore);
+  const { invoiceState, invoiceDispatch } = useContext(InvoiceDetailStore);
 
-  const fetchInvoiceIndexByName = (invoiceName) => {
-    if (!state.invoices || !state.invoices.length) {
-      return {};
-    }
-    const foundIndex = state.invoices.findIndex(
-      (invoice) => invoice.name === invoiceName
-    );
-    const foundInvoice = state.invoices[foundIndex];
-    return { foundInvoice, foundIndex };
-  };
+  // Sanity Check
+  if (!invoiceState.invoice) {
+    return null;
+  }
 
   const submitInvoice = () => {
-    analyzeInvoice(invoice).then((updatedInvoice) => {
+    console.log("invoiceState before API", invoiceState);
+    analyzeInvoice(invoiceState.invoice).then((updatedInvoice) => {
       // If no error
       if (typeof updatedInvoice === "string") {
         // UI logic needed
@@ -56,71 +44,10 @@ const InvoiceDetail = () => {
     });
   };
 
-  const toggle = () => setModal(!modal);
-
-  const isResponseValid = (resp) => {
-    return (
-      typeof resp === "object" &&
-      resp.status &&
-      resp.status === 200 &&
-      resp.data &&
-      resp.data.status
-    );
-  };
-
-  const checkResults = (loading = isLoading, inv = invoice) => {
-    // Prevent firing function on every re-render
-    if (loading) {
-      return null;
-    }
-    if (!isLoading) {
-      setIsLoading(true);
-    }
-    fetchInvoiceResults(inv).then((response) => {
-      if (!isResponseValid(response)) {
-        return null;
-      }
-      let updatedInvoice = { ...inv };
-      updatedInvoice.analysis.data = response.data;
-      if (response.data.status === "succeeded") {
-        updatedInvoice.status = updatedInvoice.status + 1;
-        setIsLoading(false);
-      }
-      dispatch({
-        type: "UPDATE_INVOICE",
-        payload: updatedInvoice,
-      });
-      if (response.data.status !== "succeeded") {
-        const promise = new Promise((resolve) => {
-          setTimeout(() => {
-            resolve();
-          }, 5000);
-        });
-        return promise.then(() => checkResults(false, updatedInvoice));
-      }
+  const toggle = () =>
+    invoiceDispatch({
+      type: "TOGGLE_MODAL",
     });
-  };
-
-  useEffect(() => {
-    const invoiceData = fetchInvoiceIndexByName(name);
-    const { foundInvoice, foundIndex } = invoiceData;
-
-    if (foundInvoice) {
-      setInvoice(foundInvoice);
-    }
-
-    if (typeof foundIndex === "number") {
-      setInvoiceIndex(foundIndex);
-    }
-
-    if (invoice.status === 1) {
-      checkResults(isLoading, invoice);
-    }
-
-    if (invoice.status !== 1 && isLoading) {
-      setIsLoading(false);
-    }
-  }, [state]);
 
   return (
     <>
@@ -128,19 +55,22 @@ const InvoiceDetail = () => {
         <Row>
           <Col md="6">
             <Card>
-              {invoice && Object.keys(invoice).length && (
+              {invoiceState.invoice.url && invoiceState.invoice.name && (
                 <>
                   <CardImageWrapper>
                     <CardImg
                       top
                       width="100%"
-                      src={invoice.url + process.env.REACT_APP_AZURE_SAS}
+                      src={
+                        invoiceState.invoice.url +
+                        process.env.REACT_APP_AZURE_SAS
+                      }
                       alt="Card image cap"
                       onClick={toggle}
                     />
                   </CardImageWrapper>
                   <CardBody>
-                    <CardTitle>{invoice.name}</CardTitle>
+                    <CardTitle>{invoiceState.invoice.name}</CardTitle>
                     <CardSubtitle>Card subtitle</CardSubtitle>
                     <CardText>
                       Some quick example text to build on the card title and
@@ -153,33 +83,15 @@ const InvoiceDetail = () => {
             </Card>
           </Col>
           <Col md="6">
-            <Stepper invoice={invoice} submitInvoice={submitInvoice}></Stepper>
+            <Stepper
+              invoice={{ ...invoiceState.invoice }}
+              submitInvoice={submitInvoice}
+            ></Stepper>
           </Col>
         </Row>
-        <InvoiceIndexStoreProvider index={invoiceIndex}>
-          <Analysis invoice={invoice} />
-        </InvoiceIndexStoreProvider>
+        <Analysis invoice={{ ...invoiceState.invoice }} />
       </div>
-      <Modal isOpen={modal} toggle={toggle}>
-        <ModalBody>
-          <Card>
-            <CardImg
-              top
-              width="100%"
-              src={invoice.url + process.env.REACT_APP_AZURE_SAS}
-              alt="Card image cap"
-            />
-          </Card>
-        </ModalBody>
-        <ModalFooter>
-          <Button color="primary" onClick={toggle}>
-            Do Something
-          </Button>{" "}
-          <Button color="secondary" onClick={toggle}>
-            Cancel
-          </Button>
-        </ModalFooter>
-      </Modal>
+      <ModalComponent />
     </>
   );
 };

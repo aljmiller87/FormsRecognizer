@@ -1,17 +1,22 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Col, Card, CardTitle, CardText } from "reactstrap";
 import { get } from "lodash";
+import { InvoiceDetailStore } from "../../context/InvoiceDetail";
 
-const DocType = ({ data }) => {
-  if (!data) {
-    return null;
-  }
+const DocType = () => {
+  const { invoiceState } = useContext(InvoiceDetailStore);
+  const { invoice } = invoiceState;
+
   const [docType, setDocType] = useState("");
   useEffect(() => {
-    let type = get(data, "analyzeResult.documentResults[0].docType", {});
+    let type = get(
+      invoice,
+      "analysis.data.analyzeResult.documentResults[0].docType",
+      "No Data"
+    );
     setDocType(type);
-  }, [data]);
+  }, [invoice]);
 
   return (
     <Col sm="6" md="4">
